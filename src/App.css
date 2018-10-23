@@ -1,0 +1,16 @@
+.login-container {
+  width: 550px !important;
+  margin-top: 45px;
+}
+
+.home-container {
+  width: 80% !important;
+}
+
+.pt {
+  padding-top: 0.75em;
+}
+
+.mt {
+  margin-top: 0.5em !important;
+}
