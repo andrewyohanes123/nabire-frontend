@@ -7,6 +7,10 @@
   width: 80% !important;
 }
 
+.text-right {
+  text-align: right !important;
+}
+
 .pt {
   padding-top: 0.75em;
 }

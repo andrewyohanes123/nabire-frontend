@@ -10,7 +10,7 @@ export default class ItemTable extends Component {
             <tr>
               <th>No.</th>
               <th>Nama</th>
-              <th>Satuan</th>
+              <th>Jumlah item/Satuan</th>
               <th>Harga</th>
               <th>Edit/Hapus</th>
             </tr>
@@ -34,7 +34,7 @@ export default class ItemTable extends Component {
                       <tr key={index}>
                         <td>{index + 1}</td>
                         <td>{item.name}</td>
-                        <td>{item.unit.name}</td>
+                        <td>{item.quantity}/{item.unit.name}</td>
                         <td>Rp. {item.price}</td>
                         <td>
                           <div className="ui buttons">

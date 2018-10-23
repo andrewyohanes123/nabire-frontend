@@ -42,7 +42,7 @@ export default class Item extends Component {
     if (this.state.items === 0) this.setState({ loading: true });
     Req.get('/api/items', Token.sentHeader(null, null, {
       params: {
-        attributes: "id,name,price",
+        attributes: "id,name,price,quantity",
         limit: this.state.limit,
         offset: this.state.offset
       }
