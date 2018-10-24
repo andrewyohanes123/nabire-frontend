@@ -14,9 +14,9 @@ export default class HomeForm extends Component {
         <div className="ui container home-container">
           <TabNav match={match} />
           <Switch>
-            <Route path={match.path} exact component={CardForm} />
+            <Route path={`${match.path}`} component={CardForm} />
             <Route path={`${match.path}/user`} exact component={User} />
-            <Route path={`${match.path}/item`} exact component={Item} />
+            <Route path={`${match.path}/item`} component={Item} />
           </Switch>
         </div>
       </div>

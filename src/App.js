@@ -14,7 +14,7 @@ class App extends Component {
         <BrowserRouter>
           <Switch>
             <Route path="/" exact component={Login} />
-            <Route path="/form" component={HomeForm} />
+            <Route path="/form/purchases" component={HomeForm} />
           </Switch>
         </BrowserRouter>
       </React.Fragment>
