@@ -10,7 +10,8 @@ export default class ItemTable extends Component {
             <tr>
               <th>No.</th>
               <th>Nama</th>
-              <th>Jumlah item/Satuan</th>
+              <th>Jumlah item</th>
+              <th>Satuan</th>
               <th>Harga</th>
               <th>Edit/Hapus</th>
             </tr>
@@ -32,14 +33,15 @@ export default class ItemTable extends Component {
                   items.map((item, index) => {
                     return (
                       <tr key={index}>
-                        <td>{index + 1}</td>
+                        <td>{index + (this.props.offset+1)}</td>
                         <td>{item.name}</td>
-                        <td>{item.quantity}/{item.unit.name}</td>
+                        <td>{item.quantity}</td>
+                        <td>{item.unit.name}</td>
                         <td>Rp. {item.price}</td>
                         <td>
                           <div className="ui buttons">
-                            <button className="ui button orange">Edit</button>
-                            <button className="ui button red">Hapus</button>
+                            <button onClick={() => this.props.update(item)} className="ui button yellow">Edit</button>
+                            <button onClick={() => this.props.delete(item)} className="ui button red">Hapus</button>
                           </div>
                         </td>
                       </tr>
@@ -51,7 +53,7 @@ export default class ItemTable extends Component {
           </tbody>
           <tfoot>
             <tr>
-              <th colSpan="2">
+              <th colSpan="3">
                 <div className="ui labeled input">
                   <div className="ui label label">Limit</div>
                   <select name="" onChange={this.props.limitChange} value={this.props.limit} id="">

@@ -1,9 +1,12 @@
 import React, { Component, Fragment } from 'react'
 import ItemForm from '../components/ItemForm';
 import ItemTable from '../components/ItemTable';
+import FormSatuan from '../components/FormSatuan';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import Req from '../modules/Req';
 import Token from '../modules/Token';
+import FormRekening from '../components/FormRekening';
+import FormTipeRekening from '../components/FormTipeRekening';
 
 export default class Item extends Component {
   constructor(props) {
@@ -16,7 +19,9 @@ export default class Item extends Component {
       loading: false,
       total: 1,
       total_pages: 1,
-      current_page: 1
+      current_page: 1,
+      edit_mode : false,
+      item : {}
     }
 
     this._submitItem = this._submitItem.bind(this);
@@ -25,6 +30,8 @@ export default class Item extends Component {
     this.firstPage = this.firstPage.bind(this);
     this.lastPage = this.lastPage.bind(this);
     this.limitChange = this.limitChange.bind(this);
+    this._deleteItem = this._deleteItem.bind(this);
+    this._updateItem = this._updateItem.bind(this);
   }
 
   componentDidMount = () => {
@@ -91,8 +98,29 @@ export default class Item extends Component {
     this.setState({ offset: 0, limit: ev.target.value, current_page: 1 }, () => this._getItems());
   }
 
+  _editItem = (item) => {
+    this.setState({ 
+      item, edit_mode : true
+     })
+  }
+
+  _deleteItem = ({id}) => {
+    Req.delete(`/api/items/${id}`).then(resp => {
+      Token.setToken(resp);
+      this.setState({ item : {}, edit_mode : false });
+      this._getItems();
+    })
+  }
+
+  _updateItem = ({unit_id, name, id, price}) => {
+    Req.put(`/api/items/${id}`, {unit_id, name, price}).then(resp => {
+      Token.setToken(resp);
+      this._getItems();
+    }).catch(err => alert(err));
+  }
+
   render() {
-    document.title = "Item"
+    document.title = "Data Master | Item"
     const { match } = this.props;
     return (
       <div className="ui card inverted fluid">
@@ -102,15 +130,17 @@ export default class Item extends Component {
           <div className="ui grid">
             <div className="three wide column">
               <div className="ui fluid vertical menu">
-                <NavLink to={`${match.path}`} exact className="item">Item</NavLink>
-                <NavLink to={`${match.path}/units`} exact className="item">Satuan</NavLink>
+                <NavLink to={`${match.path}`} exact className="item"><i className="archive icon"></i>Item</NavLink>
+                <NavLink to={`${match.path}/units`} exact className="item"><i className="weight icon"></i>Satuan</NavLink>
+                <NavLink to={`${match.path}/accounts`} className="item"><i className="credit card icon"></i>&nbsp;Rekening</NavLink>
+                <NavLink to={`${match.path}/account_types`} className="item"><i className="credit card icon"></i>&nbsp;Tipe Rekening</NavLink>
               </div>
             </div>
             <Switch>
               <Route path={`${match.path}`} exact render={() => {
                 return (
                   <Fragment>
-                    <div className="four wide column"><ItemForm submit={(data) => this._submitItem(data)} units={this.state.units} /></div>
+                    <div className="four wide column"><ItemForm item={this.state.item} edit={this.state.edit_mode} save={(item) => this._updateItem(item)} cancel={() => this.setState({ item : {}, edit_mode : false })} submit={(data) => this._submitItem(data)} units={this.state.units} /></div>
                     <div className="nine wide column">
                       <ItemTable
                         total_pages={this.state.total_pages}
@@ -123,27 +153,17 @@ export default class Item extends Component {
                         lastPage={this.lastPage}
                         limitChange={this.limitChange}
                         limit={this.state.limit}
+                        offset={this.state.offset}
+                        update={this._editItem}
+                        delete={this._deleteItem}
                       />
                     </div>
                   </Fragment>
                 )
               }} />
-              <Route path={`${match.path}/units`} render={() => {
-                return (
-                  <Fragment>
-                    <div className="four wide column">
-                      <h1 className="header">Satuan</h1>
-                    </div>
-                    <div className="nine wide column">
-                      <div className="ui card">
-                        <div className="content">
-                          <h1 className="header">Table</h1>
-                        </div>
-                      </div>
-                    </div>
-                  </Fragment>
-                )
-              }} />
+              <Route path={`${match.path}/units`} component={FormSatuan} />
+              <Route path={`${match.path}/accounts`} exact component={FormRekening} />
+              <Route path={`${match.path}/account_types`} exact component={FormTipeRekening} />
             </Switch>
           </div>
         </div>

@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import Req from '../modules/Req';
 import Token from '../modules/Token';
 import defaultImg from './dummy.jpg';
+import FileBase64 from 'react-file-base64';
 
 export default class User extends Component {
   constructor(props) {
@@ -11,9 +12,10 @@ export default class User extends Component {
       name: "...",
       username: '....',
       password: "",
-      avatar : "base64",
+      avatar: "base64",
       loading: false
     }
+    this._upload_profile = this._upload_profile.bind(this);
   }
 
   componentDidMount = () => {
@@ -32,6 +34,20 @@ export default class User extends Component {
     this.setState({ [ev.target.name]: ev.target.value })
   }
 
+  _updateUser = (ev = {}) => {
+    if (Object.keys(ev).length !== 0) ev.preventDefault();
+    const { name, type, avatar, username, password, id } = this.state;
+    Req.put(`/api/users/${id}`, { name, type, avatar, password, username }).then(resp => {
+      Token.setToken(resp);
+      this.setState({ password: "" });
+    }).catch(err => alert(err))
+  }
+
+  _upload_profile = (file) => {
+    this.setState({ avatar : file.base64 }, () => this._updateUser());
+    this._get_user();
+  }
+
   render() {
     const { loading } = this.state;
     document.title = this.state.name;
@@ -43,13 +59,16 @@ export default class User extends Component {
           <div className="ui celled grid">
             <div className="row">
               <div className="three wide column">
-                { loading &&
+                {loading &&
                   <div className="ui placeholder">
                     <div className="square image" />
                   </div>
                 }
-                { !loading &&
-                  <img src={ this.state.avatar === 'base64' ? defaultImg : this.state.avatar} className="ui medium circular bordered image fluid" alt=""/>
+                {!loading &&
+                  <Fragment>
+                    <img onClick={() => this.avatar.click()} src={this.state.avatar === 'base64' ? defaultImg : this.state.avatar} className="ui medium circular bordered image fluid" alt="" />
+                    <FileBase64 onDone={this._upload_profile} style={{ display: 'none' }} ref={ref => this.avatar = ref} name="" id="" />
+                  </Fragment>
                 }
               </div>
               <div className="thirteen wide column">
@@ -57,16 +76,18 @@ export default class User extends Component {
                   <form action="" className="ui form">
                     <div className="field">
                       <label htmlFor="">Nama lengkap</label>
-                      <input type="text" placeholder="Nama Lengkap" onChange={this.onChange} value={this.state.name} />
+                      <input type="text" name="name" placeholder="Nama Lengkap" onChange={this.onChange} value={this.state.name} />
                     </div>
                     <div className="field">
                       <label htmlFor="">Username</label>
-                      <input type="text" placeholder="Username" onChange={this.onChange} value={this.state.username} />
+                      <input type="text" name="username" placeholder="Username" onChange={this.onChange} value={this.state.username} />
                     </div>
                     <div className="field">
                       <label htmlFor="">Password</label>
-                      <input type="password" placeholder="Password" onChange={this.onChange} value={this.state.password} />
+                      <input type="password" name="password" placeholder="Password" onChange={this.onChange} value={this.state.password} />
                     </div>
+                    <div className="ui divider"></div>
+                    <button onClick={this._updateUser} className="ui button yellow"><i className="save icon"></i>&nbsp;Simpan</button>
                   </form>
                 }
                 {loading &&

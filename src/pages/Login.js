@@ -39,7 +39,7 @@ export default class Login extends Component {
 
   render() {
     document.title = "Login";
-    if (this.state.login) return (<Redirect to="/form" />)
+    if (this.state.login) return (<Redirect to="/dashboard" />)
     return (
     <div className="ui container login-container aligned">
       <div className="ui card fluid centered">

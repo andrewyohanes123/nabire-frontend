@@ -10,6 +10,7 @@ export default class FormPenjualan extends Component {
       price_per_unit: 1000,
       total_price: 1000,
       exact_total_price: 1000,
+      price : 0,
       description: "",
       item_id: 0,
       items: [],
@@ -60,8 +61,8 @@ export default class FormPenjualan extends Component {
 
   _submit = (ev) => {
     ev.preventDefault();
-    const { item_id, quantity, description } = this.state;
-    Req.post('/api/sales', { item_id, quantity, description }).then(resp => {
+    const { item_id, quantity, description, price } = this.state;
+    Req.post('/api/sales', { item_id, quantity, description, price }).then(resp => {
       Token.setToken(resp);
       this.setState({
         quantity: 1,
@@ -112,6 +113,13 @@ export default class FormPenjualan extends Component {
           <div className="ui left labeled input">
             <div className="ui basic label">Rp.</div>
             <input type="number" readOnly value={this.state.item.price} placeholder="Harga per item" />
+          </div>
+        </div>
+        <div className="field">
+          <label htmlFor="">Harga sekarang</label>
+          <div className="ui left labeled input">
+            <div className="ui basic label">Rp.</div>
+            <input type="number" onChange={(ev) => {this.setState({ price : ev.target.value })}} value={this.state.price} placeholder="Harga per item" />
           </div>
         </div>
         <div className="field">

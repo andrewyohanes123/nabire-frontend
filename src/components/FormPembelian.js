@@ -12,7 +12,8 @@ export default class FormPembelian extends Component {
       description: "",
       item_id : 0,
       items : [],
-      item : {}
+      item : {},
+      price : 0
     }
   }
 
@@ -33,8 +34,8 @@ export default class FormPembelian extends Component {
 
   _postItem = (ev) => {
     ev.preventDefault();
-    const {invoice_number,quantity,transfer,description,item_id} = this.state;
-    Req.post('/api/puchases', {invoice_number,quantity,transfer,description,item_id}).then(resp => {
+    const {invoice_number,quantity,transfer,description,item_id, price} = this.state;
+    Req.post('/api/purchases', {invoice_number,quantity,transfer,description,item_id, price}).then(resp => {
       Token.setToken(resp);
       this.setState({invoice_number: 0,quantity: 0,transfer: 0,description: 0,item_id: 0});
     }).catch(err => alert(err));
@@ -63,6 +64,10 @@ export default class FormPembelian extends Component {
         <div className="ui field">
           <label htmlFor="">Jumlah item</label>
           <input type="number" onChange={this._onChange} name="quantity" placeholder="Jumlah item" value={this.state.quantity} />
+        </div>
+        <div className="ui field">
+          <label htmlFor="">Harga</label>
+          <input type="number" onChange={this._onChange} name="price" placeholder="Nominal transfer" value={this.state.price} />
         </div>
         <div className="ui field">
           <label htmlFor="">Nominal tranfer</label>
