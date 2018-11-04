@@ -39,12 +39,10 @@ export default class FormRekening extends Component {
   }
 
   _getAccounts = () => {
-    Req.get('/api/accounts/', Token.sentHeader(null, null, {
-      params : {
-        attributes : "id,name,number",
+    Req.get('/api/accounts/', Token.params({
+        attributes : "root:id,name,number",
         limit : 10
-      }
-    })).then(resp => {
+      })).then(resp => {
       Token.setToken(resp);
       this.setState({ accounts : resp.data.data.rows });
     }).catch(err => alert(err));

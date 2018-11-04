@@ -25,12 +25,10 @@ export default class FormTipeRekening extends Component {
 
   _getTypes = () => {
     this.setState({ loading: true });
-    Req.get('/api/types/', Token.sentHeader(null, null, {
-      params: {
-        attributes: "id,name,created_at",
-        limit: this.state.limit,
-        offset: this.state.offset
-      }
+    Req.get('/api/types/', Token.params({
+      attributes: "root:id,name,created_at",
+      limit: this.state.limit,
+      offset: this.state.offset
     })).then(resp => {
       Token.setToken(resp);
       this.setState({ types: resp.data.data.rows, loading: false });

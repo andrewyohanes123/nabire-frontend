@@ -22,7 +22,7 @@ export default class FormPembelian extends Component {
   };
   
   _getItems = () => {
-    Req.get('/api/items', Token.sentHeader(null, null, {params : {attributes : 'id,name,price', limit : 9999}})).then(resp => {
+    Req.get('/api/items', Token.params({attributes : 'root:id,name,price;units:id,name', limit : 9999})).then(resp => {
       Token.setToken(resp);
       this.setState({ items : resp.data.data.rows});
     }).catch(err => alert(err));

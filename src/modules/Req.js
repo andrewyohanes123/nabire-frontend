@@ -1,6 +1,6 @@
 import axios from 'axios';
 const Req = axios.create({
-  baseURL: "http://192.168.1.16:8080",
+  baseURL: "http://192.168.1.5:8080",
   // baseURL : "https://nabireapis.herokuapp.com/",
   headers: {
     'x-access-token': localStorage.getItem('x-access-token'),

@@ -30,7 +30,7 @@ export default class FormPenjualan extends Component {
   };
 
   _getItems = () => {
-    Req.get('/api/items/', Token.sentHeader(null, null, { params: { attributes: 'id,name,price', limit: 999 } })).then(resp => {
+    Req.get('/api/items/', Token.params({ attributes: 'root:id,name,price;units:id,name', limit: 999 })).then(resp => {
       Token.setToken(resp);
       this.setState({ items: resp.data.data.rows });
     }).catch(err => alert(err));
@@ -38,7 +38,7 @@ export default class FormPenjualan extends Component {
 
   _getItem = () => {
     const { item_id } = this.state;
-    Req.get(`/api/items/${item_id}`, Token.sentHeader(null, null, { params: { attributes: 'id,price,quantity' } })).then(resp => {
+    Req.get(`/api/items/${item_id}`, Token.params({ attributes: 'root:id,price,quantity;units:id,name' })).then(resp => {
       Token.setToken(resp);
       console.log(resp.data);
       this.setState({
@@ -83,6 +83,7 @@ export default class FormPenjualan extends Component {
   }
 
   render() {
+    document.title = "Form | Penjualan"
     return (
       <form className="ui form">
         <div className="field">

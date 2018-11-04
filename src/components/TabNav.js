@@ -36,8 +36,9 @@ export default class TabNav extends Component {
       <div>
         <div className="ui grey inverted menu">
         <NavLink to={`${this.props.match.path}`} exact className="item"><i className="dashboard icon"></i>&nbsp;Dashboard</NavLink>
-          <NavLink to={`${this.props.match.path}/form`} exact className="item"><i className="newspaper outline icon"></i>&nbsp;Form</NavLink>
-          <NavLink to={`${this.props.match.path}/item`} exact className="item"><i className="tasks icon"></i>&nbsp;Data Master</NavLink>
+          <NavLink to={`${this.props.match.path}/form`} className="item"><i className="newspaper outline icon"></i>&nbsp;Form</NavLink>
+          <NavLink to={`${this.props.match.path}/stocks`} className="item"><i className="boxes icon"></i>&nbsp;Persediaan barang</NavLink>
+          <NavLink to={`${this.props.match.path}/item`} className="item"><i className="tasks icon"></i>&nbsp;Data Master</NavLink>
           <NavLink to={`${this.props.match.path}/user`} exact className="item"><i className="user icon"></i>&nbsp;{this.state.loading ? <LoadingIndicator /> : this.state.user.name}</NavLink>
           <NavLink to={`/`} onClick={ () => this.props.forceLogout()} exact className="item floated right"><i className="sign-out icon"></i>&nbsp;Logout</NavLink>
         </div>

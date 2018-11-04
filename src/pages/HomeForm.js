@@ -4,6 +4,7 @@ import CardForm from '../components/CardForm';
 import User from './User';
 import Item from './Item';
 import {Switch, Route, Redirect } from 'react-router-dom';
+import StokTable from '../components/StokTable';
 
 export default class HomeForm extends Component {
   state = {
@@ -47,6 +48,7 @@ export default class HomeForm extends Component {
             <Route path={`${match.path}/form`} component={CardForm} />
             <Route path={`${match.path}/user`} exact component={User} />
             <Route path={`${match.path}/item`} component={Item} />
+            <Route path={`${match.path}/stocks`} exact component={StokTable} />
           </Switch>
         </div>
       </div>

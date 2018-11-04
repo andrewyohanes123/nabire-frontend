@@ -18,3 +18,11 @@
 .mt {
   margin-top: 0.5em !important;
 }
+
+.mb {
+  margin-bottom: 0.5em !important;
+}
+
+textarea {
+  resize: none !important;
+}

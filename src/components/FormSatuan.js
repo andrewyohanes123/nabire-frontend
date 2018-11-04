@@ -45,12 +45,10 @@ export default class FormSatuan extends Component {
 
   _getUnits = () => {
     if (this.state.units.length > 0) this.setState({ loading: true });
-    Req.get('/api/units', Token.sentHeader(null, null, {
-      params: {
-        attributes: 'id,name',
-        limit: this.state.limit,
-        offset: this.state.offset
-      }
+    Req.get('/api/units', Token.params({
+      attributes: 'root:id,name',
+      limit: this.state.limit,
+      offset: this.state.offset
     })).then(resp => {
       Token.setToken(resp);
       this.setState({ units: resp.data.data.rows, loading: false, total_pages: Math.ceil(resp.data.data.count / this.state.limit) });
@@ -91,10 +89,10 @@ export default class FormSatuan extends Component {
   _updateUnit = (ev) => {
     ev.preventDefault();
     const { id } = this.state.unit;
-    const {name} = this.state;
+    const { name } = this.state;
     Req.put(`/api/units/${id}`, { name }).then(resp => {
       Token.setToken(resp);
-      this.setState({ name : "", edit_mode : false, unit : {} });
+      this.setState({ name: "", edit_mode: false, unit: {} });
       this._getUnits();
     }).catch(err => alert(err));
   }
@@ -111,7 +109,7 @@ export default class FormSatuan extends Component {
             {!this.state.edit_mode && <button onClick={this._postUnits} className="ui button green"><i className="send icon"></i>&nbsp;Tambah</button>}
             {this.state.edit_mode &&
               <Fragment>
-                <button onClick={() => this.setState({ edit_mode : false, unit : {}, name : "" })} className="ui button basic dark">Batal</button>
+                <button onClick={() => this.setState({ edit_mode: false, unit: {}, name: "" })} className="ui button basic dark">Batal</button>
                 <button onClick={this._updateUnit} className="ui button basic yellow">Simpan</button>
               </Fragment>}
           </form>

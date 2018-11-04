@@ -3,6 +3,7 @@ import ItemForm from '../components/ItemForm';
 import ItemTable from '../components/ItemTable';
 import FormSatuan from '../components/FormSatuan';
 import { Switch, Route, NavLink } from 'react-router-dom';
+import {Modal, Button, Header, Icon} from 'semantic-ui-react';
 import Req from '../modules/Req';
 import Token from '../modules/Token';
 import FormRekening from '../components/FormRekening';
@@ -20,8 +21,9 @@ export default class Item extends Component {
       total: 1,
       total_pages: 1,
       current_page: 1,
-      edit_mode : false,
-      item : {}
+      edit_mode: false,
+      item: {name : ''},
+      confirmModal : false
     }
 
     this._submitItem = this._submitItem.bind(this);
@@ -40,7 +42,7 @@ export default class Item extends Component {
   }
 
   _getUnits = () => {
-    Req.get('/api/units', Token.sentHeader(null, null, { params: { attributes: 'id,name', limit: 999 } })).then(resp => {
+    Req.get('/api/units', Token.params({ attributes: 'root:id,name', limit: 999 })).then(resp => {
       Token.setToken(resp);
       this.setState({ units: resp.data.data.rows });
     }).catch(err => alert(err));
@@ -48,12 +50,11 @@ export default class Item extends Component {
 
   _getItems = () => {
     if (this.state.items === 0) this.setState({ loading: true });
-    Req.get('/api/items', Token.sentHeader(null, null, {
-      params: {
-        attributes: "id,name,price,quantity",
-        limit: this.state.limit,
-        offset: this.state.offset
-      }
+    Req.get('/api/items', Token.params({
+      attributes: "root:id,name,price,quantity;units:id,name",
+      limit: this.state.limit,
+      offset: this.state.offset,
+      include : 'units'
     })).then(resp => {
       Token.setToken(resp);
       const { rows, count } = resp.data.data;
@@ -99,24 +100,28 @@ export default class Item extends Component {
   }
 
   _editItem = (item) => {
-    this.setState({ 
-      item, edit_mode : true
-     })
+    this.setState({
+      item, edit_mode: true
+    })
   }
 
-  _deleteItem = ({id}) => {
+  _deleteItem = ({ id }) => {
     Req.delete(`/api/items/${id}`).then(resp => {
       Token.setToken(resp);
-      this.setState({ item : {}, edit_mode : false });
+      this.setState({ item: {}, edit_mode: false, confirmModal : false });
       this._getItems();
     })
   }
 
-  _updateItem = ({unit_id, name, id, price}) => {
-    Req.put(`/api/items/${id}`, {unit_id, name, price}).then(resp => {
+  _updateItem = ({ unit_id, name, id, price }) => {
+    Req.put(`/api/items/${id}`, { unit_id, name, price }).then(resp => {
       Token.setToken(resp);
       this._getItems();
     }).catch(err => alert(err));
+  }
+
+  confirmModal = (item) => {
+    this.setState({ item, confirmModal : true });
   }
 
   render() {
@@ -124,6 +129,17 @@ export default class Item extends Component {
     const { match } = this.props;
     return (
       <div className="ui card inverted fluid">
+        <Modal dimmer="blurring" basic size="small" open={this.state.confirmModal}>
+          <Header icon="trash alternate" content={`Apakah Anda yakin ingin menghapus ${this.state.item.name}?`} />
+          <Modal.Actions>
+            <Button basic inverted onClick={() => this.setState({ item : {name : ''}, confirmModal : false })}>
+              <Icon name="remove" />&nbsp;Tidak
+            </Button>
+            <Button basic color="red" onClick={() => this._deleteItem(this.state.item)}>
+              <Icon name="checkmark" />&nbsp;Ya
+            </Button>
+          </Modal.Actions>
+        </Modal>
         <div className="content">
           <h1 className="header"><i className="tasks icon"></i>&nbsp;Item</h1>
           <div className="ui divider" />
@@ -140,7 +156,7 @@ export default class Item extends Component {
               <Route path={`${match.path}`} exact render={() => {
                 return (
                   <Fragment>
-                    <div className="four wide column"><ItemForm item={this.state.item} edit={this.state.edit_mode} save={(item) => this._updateItem(item)} cancel={() => this.setState({ item : {}, edit_mode : false })} submit={(data) => this._submitItem(data)} units={this.state.units} /></div>
+                    <div className="four wide column"><ItemForm item={this.state.item} edit={this.state.edit_mode} save={(item) => this._updateItem(item)} cancel={() => this.setState({ item: {}, edit_mode: false })} submit={(data) => this._submitItem(data)} units={this.state.units} /></div>
                     <div className="nine wide column">
                       <ItemTable
                         total_pages={this.state.total_pages}
@@ -155,7 +171,7 @@ export default class Item extends Component {
                         limit={this.state.limit}
                         offset={this.state.offset}
                         update={this._editItem}
-                        delete={this._deleteItem}
+                        delete={this.confirmModal}
                       />
                     </div>
                   </Fragment>

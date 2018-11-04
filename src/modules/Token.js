@@ -20,6 +20,13 @@ export default {
       ...params
     }
   },
+  params : (params) => {
+    return {
+      params : {
+        ...params
+      }
+    }
+  },
   setLoginToken: ({ token, refreshToken }) => {
     localStorage.setItem('x-access-token', token);
     localStorage.setItem('x-refresh-token', refreshToken);
